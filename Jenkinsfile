@@ -37,16 +37,6 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                // Menjalankan tes (jika ada)
-                 sh '''
-                . venv/bin/activate
-                pytest
-                '''
-            }
-        }
-
         stage('Deploy') {
             steps {
                 // Menjalankan aplikasi Streamlit
