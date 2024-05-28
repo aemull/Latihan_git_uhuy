@@ -9,15 +9,6 @@ pipeline {
     }
 
     stages {
-         stage('Install Python') {
-            steps {
-                // Menginstal Python di agen Jenkins (contoh untuk Debian/Ubuntu)
-                sh '''
-                sudo apt-get update
-                sudo apt-get install -y python3 python3-pip
-                '''
-            }
-        }
         
         stage('Clone Repository') {
             steps {
