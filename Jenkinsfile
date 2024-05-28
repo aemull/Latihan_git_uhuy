@@ -49,7 +49,7 @@ pipeline {
     }
 
     post {
-        always {
+        failure {
             // Membersihkan lingkungan kerja setelah selesai
             cleanWs()
         }
