@@ -22,7 +22,7 @@ pipeline {
                 // Membuat dan mengaktifkan virtual environment
                 sh '''
                 python3 -m venv venv
-                source venv/bin/activate
+                . venv/bin/activate
                 '''
             }
         }
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 // Menginstal dependencies yang diperlukan menggunakan pip
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 pip install -r requirements.txt
                 '''
             }
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 // Menjalankan tes (jika ada)
                  sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 pytest
                 '''
             }
@@ -51,7 +51,7 @@ pipeline {
             steps {
                 // Menjalankan aplikasi Streamlit
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 streamlit run app.py --server.port 8501
                 '''
             }
