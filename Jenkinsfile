@@ -42,7 +42,7 @@ pipeline {
                 // Menjalankan aplikasi Streamlit
                 sh '''
                 . venv/bin/activate
-                 nohup streamlit run app.py --server.port 8501 > streamlit.log 2>&1 &
+                 nohup streamlit run app.py --server.port 8501
                 '''
             }
         }
