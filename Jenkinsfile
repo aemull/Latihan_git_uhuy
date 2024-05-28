@@ -30,21 +30,30 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Menginstal dependencies yang diperlukan menggunakan pip
-                sh 'pip install -r requirements.txt'
+                sh '''
+                source venv/bin/activate
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
                 // Menjalankan tes (jika ada)
-                sh 'pytest'
+                 sh '''
+                source venv/bin/activate
+                pytest
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
                 // Menjalankan aplikasi Streamlit
-                sh 'streamlit run app.py'
+                sh '''
+                source venv/bin/activate
+                streamlit run app.py --server.port 8501
+                '''
             }
         }
     }
