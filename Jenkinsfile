@@ -17,6 +17,16 @@ pipeline {
             }
         }
 
+        stage('Setup Virtual Environment') {
+            steps {
+                // Membuat dan mengaktifkan virtual environment
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 // Menginstal dependencies yang diperlukan menggunakan pip
