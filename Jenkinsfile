@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         // Definisikan variabel lingkungan yang diperlukan
-        GIT_REPO = 'https://github.com/username/repo.git'
-        GIT_BRANCH = 'main'
-        DOCKER_IMAGE = 'my_dashboard_app:latest'
+        GIT_REPO = 'https://github.com/aemull/Latihan_git_uhuy'
+        GIT_BRANCH = 'master'
+        DOCKER_IMAGE = 'finance_app:latest'
         DOCKER_CONTAINER_NAME = 'my_dashboard_app_container'
     }
 
