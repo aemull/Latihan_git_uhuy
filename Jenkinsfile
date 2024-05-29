@@ -42,11 +42,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            // Membersihkan lingkungan kerja setelah selesai
-            cleanWs()
-        }
-    }
 }
