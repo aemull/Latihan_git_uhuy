@@ -3,13 +3,13 @@ pipeline {
 
     environment {
         // Definisikan variabel lingkungan yang diperlukan
-        GIT_REPO = 'https://github.com/aemull/Latihan_git_uhuy'
-        GIT_BRANCH = 'master'
-        //APP_DIR = 'my_dashboard_app'
+        GIT_REPO = 'https://github.com/username/repo.git'
+        GIT_BRANCH = 'main'
+        DOCKER_IMAGE = 'my_dashboard_app:latest'
+        DOCKER_CONTAINER_NAME = 'my_dashboard_app_container'
     }
 
     stages {
-        
         stage('Clone Repository') {
             steps {
                 // Cloning repository dari GitHub
@@ -17,39 +17,34 @@ pipeline {
             }
         }
 
-        stage('Setup Virtual Environment') {
+        stage('Build Docker Image') {
             steps {
-                // Membuat dan mengaktifkan virtual environment
-                sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                '''
+                // Membangun Docker image
+                script {
+                    docker.build("${DOCKER_IMAGE}")
+                }
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Run Docker Container') {
             steps {
-                // Menginstal dependencies yang diperlukan menggunakan pip
-                sh '''
-                . venv/bin/activate
-                pip install -r requirements.txt
-                '''
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                // Menjalankan aplikasi Streamlit
-                sh '''
-                . venv/bin/activate
-                 nohup streamlit run app.py --server.port 8501
-                '''
+                script {
+                    // Menghentikan dan menghapus container yang berjalan sebelumnya
+                    sh """
+                    if [ \$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME}) ]; then
+                        docker stop ${DOCKER_CONTAINER_NAME}
+                        docker rm ${DOCKER_CONTAINER_NAME}
+                    fi
+                    """
+                    // Menjalankan container baru dari image yang telah dibangun
+                    sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 8501:8501 ${DOCKER_IMAGE}"
+                }
             }
         }
     }
 
     post {
-        failure {
+        always {
             // Membersihkan lingkungan kerja setelah selesai
             cleanWs()
         }
