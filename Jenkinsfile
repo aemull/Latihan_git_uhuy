@@ -1,21 +1,28 @@
-pipeline {
-    agent any
+ agent any
 
     environment {
-        DOCKER_IMAGE = "streamlit_dashboard"
+        // Definisikan variabel lingkungan yang diperlukan
+        GIT_REPO = 'https://github.com/aemull/Latihan_git_uhuy.git'
+        GIT_BRANCH = 'master'
+        IMAGE_NAME = 'my_dashboard_app'
+        DOCKER_IMAGE = 'mywebapp:latest'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/aemull/jkblc-devops.git', branch: 'master'
+                // Cloning repository dari GitHub
+                git branch: "${GIT_BRANCH}", url: "${GIT_REPO}"
+                git 'https://github.com/aemull/Latihan_git_uhuy.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
+                // Build Docker image
                 script {
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                    docker.build("${IMAGE_NAME}")
+                    docker.build("${DOCKER_IMAGE}")
                 }
             }
         }
@@ -23,22 +30,29 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    sh """
-                        docker ps -q --filter "name=$DOCKER_IMAGE" | grep -q . && docker stop $DOCKER_IMAGE || true
-                        docker ps -aq --filter "name=$DOCKER_IMAGE" | grep -q . && docker rm $DOCKER_IMAGE || true
-                    """
-
-                    sh 'docker run -d -p 8501:8501 --name $DOCKER_IMAGE $DOCKER_IMAGE'
+                    // Menjalankan container di latar belakang
+                    sh "docker run -d -p 8501:8501 --name my_dashboard_container ${IMAGE_NAME}"
+                    docker.image("${DOCKER_IMAGE}").run("-d -p 8501:8501")
                 }
             }
         }
+    }
 
-        stage('Cleanup') {
-            steps {
-                script {
-                    sh "docker rm -f $(docker ps -a -q --filter ancestor=$DOCKER_IMAGE)"
-                    sh "docker rmi $DOCKER_IMAGE"
-                }
+    post {
+        always {
+            // Membersihkan lingkungan kerja setelah selesai
+            cleanWs()
+        }
+        success {
+            // Membersihkan container Docker sebelumnya
+            script {
+                sh "docker rm -f my_dashboard_container || true"
+            }
+        }
+        failure {
+            // Membersihkan container Docker jika build gagal
+            script {
+                sh "docker rm -f my_dashboard_container || true"
             }
         }
     }
